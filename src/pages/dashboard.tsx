@@ -1,15 +1,16 @@
 "use client";
 import {
-    Activity,
-    Bot,
-    Clock,
-    Edit,
-    Eye,
-    MoreHorizontal,
-    Pause,
-    Play,
-    Trash2,
-    Zap
+  Activity,
+  Bot,
+  Clock,
+  ChevronRight,
+  Edit,
+  Eye,
+  MoreHorizontal,
+  Pause,
+  Play,
+  Trash2,
+  Zap,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -17,27 +18,29 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
 } from "@/components/ui/card";
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components/ui/table";
+import { useCallback } from "react";
+import DashboardCard from "@/components/dashboard-card";
 
 const data = {
   agents: [
@@ -86,25 +89,25 @@ const data = {
     {
       title: "Total Agents",
       value: "24",
-      change: "+2 from last month",
+      change: "2",
       icon: Bot,
     },
     {
       title: "Active Requests",
       value: "2,847",
-      change: "+12% from yesterday",
+      change: "3",
       icon: Activity,
     },
     {
       title: "Response Time",
       value: "1.2s",
-      change: "-0.3s from last week",
+      change: "4",
       icon: Clock,
     },
     {
       title: "Success Rate",
       value: "94.2%",
-      change: "+2.1% from last month",
+      change: "5",
       icon: Zap,
     },
   ],
@@ -113,49 +116,53 @@ const data = {
 export function DashboardPage() {
   const navigate = useNavigate();
 
-  const handleAgentClick = (agentId: number) => {
-    navigate(`/agents/${agentId}`);
-  };
+  const handleAgentClick = useCallback(
+    (agentId: number) => {
+      navigate(`/agents/${agentId}`);
+    },
+    [navigate]
+  );
 
   return (
-    <div className="flex flex-1 flex-col gap-4 p-4">
+    <div className="flex flex-1 flex-col gap-4 p-4 bg-card-back">
       {/* Stats Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {data.stats.map((stat, index) => (
-          <Card key={index}>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                {stat.title}
-              </CardTitle>
-              <stat.icon className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stat.value}</div>
-              <p className="text-xs text-muted-foreground">{stat.change}</p>
-            </CardContent>
-          </Card>
+          <DashboardCard
+            key={index}
+            title={stat.title}
+            value={stat.value}
+            change={stat.change}
+            icon={stat.icon}
+          />
         ))}
       </div>
 
       {/* Recent Agents Table */}
-      <Card>
+      <Card className="py-6">
         <CardHeader>
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between -mb-6">
             <div>
-              <CardTitle>Recent AI Agents</CardTitle>
-              <CardDescription>
+              <CardTitle className="font-bold">Recent AI Agents</CardTitle>
+              {/* <CardDescription>
                 Your most recently active agents
-              </CardDescription>
+              </CardDescription> */}
             </div>
-            <Button variant="outline" onClick={() => navigate("/agents")}>
+            <Button
+              className="flex items-center gap-0.5 text-sm text--primary bg-orange-100 rounded-full"
+              variant="outline"
+              onClick={() => navigate("/agents")}
+            >
               View All
+              <ChevronRight className="w-4 h-4" />
             </Button>
           </div>
         </CardHeader>
+
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
+          <Table className="[&_tr]:border-b-gray-100 [&_tr:last-child]:border-b-0">
+            <TableHeader className="[&_tr]:border-b-gray-100">
+              <TableRow className="hover:bg-transparent border-b-gray-100">
                 <TableHead>Agent</TableHead>
                 <TableHead>Type</TableHead>
                 <TableHead>Status</TableHead>
@@ -163,61 +170,41 @@ export function DashboardPage() {
                 <TableHead>Requests</TableHead>
                 <TableHead>Accuracy</TableHead>
                 <TableHead>Last Active</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
-            <TableBody>
+            <TableBody className="[&_tr:last-child]:border-b-0">
               {data.agents.map((agent) => (
                 <TableRow
                   key={agent.id}
-                  className="cursor-pointer hover:bg-muted/50"
+                  className="border-b-gray-50 hover:bg-gray-25 transition-colors cursor-pointer"
                 >
-                  <TableCell
-                    className="font-medium"
-                    onClick={() => handleAgentClick(agent.id)}
-                  >
-                    <div className="flex items-center gap-2">
-                      <Avatar className="h-8 w-8">
-                        <AvatarFallback>
-                          <Bot className="h-4 w-4" />
-                        </AvatarFallback>
-                      </Avatar>
-                      {agent.name}
-                    </div>
+                  <TableCell className="font-normal text-gray-900 px-0">
+                    {agent.name}
                   </TableCell>
-                  <TableCell onClick={() => handleAgentClick(agent.id)}>
-                    <Badge variant="outline">{agent.type}</Badge>
-                  </TableCell>
-                  <TableCell onClick={() => handleAgentClick(agent.id)}>
-                    <Badge
-                      variant={
-                        agent.status === "active" ? "default" : "secondary"
-                      }
-                      className={
+                  <TableCell className="text-gray-600 ">{agent.type}</TableCell>
+                  <TableCell>
+                    <span
+                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                         agent.status === "active"
-                          ? "bg-green-100 text-green-800"
-                          : ""
-                      }
+                          ? "bg-orange-100 text-orange-800"
+                          : "bg-gray-100 text-gray-800"
+                      }`}
                     >
-                      {agent.status}
-                    </Badge>
+                      {agent.status === "active" ? "Active" : "Paused"}
+                    </span>
                   </TableCell>
-                  <TableCell onClick={() => handleAgentClick(agent.id)}>
-                    {agent.model}
-                  </TableCell>
-                  <TableCell onClick={() => handleAgentClick(agent.id)}>
+                  <TableCell className="text-gray-600">{agent.model}</TableCell>
+                  <TableCell className="text-gray-600">
                     {agent.requests.toLocaleString()}
                   </TableCell>
-                  <TableCell onClick={() => handleAgentClick(agent.id)}>
+                  <TableCell className="text-gray-600">
                     {agent.accuracy}%
                   </TableCell>
-                  <TableCell
-                    className="text-muted-foreground"
-                    onClick={() => handleAgentClick(agent.id)}
-                  >
+                  <TableCell className="text-gray-500">
                     {agent.lastActive}
                   </TableCell>
-                  <TableCell className="text-right">
+                  <TableCell className="">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button variant="ghost" className="h-8 w-8 p-0">

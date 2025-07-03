@@ -1,20 +1,16 @@
 import {
-  Bot,
   Edit,
   Eye,
   Filter,
   MoreHorizontal,
   Pause,
   Play,
-  Plus,
   Search,
   Trash2,
 } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -84,7 +80,7 @@ const allAgents = [
     id: 5,
     name: "Email Assistant",
     type: "Support",
-    status: "active",
+    status: "paused",
     model: "GPT-4",
     requests: 678,
     lastActive: "1 minute ago",
@@ -127,166 +123,160 @@ export function AgentsPage() {
     return matchesSearch;
   });
 
-  const activeAgents = allAgents.filter(
-    (agent) => agent.status === "active"
-  ).length;
-  const pausedAgents = allAgents.filter(
-    (agent) => agent.status === "paused"
-  ).length;
+  const activeAgents = allAgents.filter((agent) => agent.status === "active").length;
+  const pausedAgents = allAgents.filter((agent) => agent.status === "paused").length;
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight">AI Agents</h2>
-          <p className="text-muted-foreground">
+          <h2 className="text-xl sm:text-2xl font-bold tracking-tight">AI Agents</h2>
+          <p className="text-muted-foreground text-sm sm:text-base">
             Manage and monitor all your AI agents
           </p>
         </div>
-        <Button onClick={() => navigate("/agents/create")}>
-          <Plus className="mr-2 h-4 w-4" />
-          Create Agent
-        </Button>
-      </div>
 
-      <div className="flex items-center gap-4">
-        <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            placeholder="Search agents..."
-            className="pl-8"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
+          <div className="relative w-full sm:w-64">
+            <Input
+              placeholder="Search agents..."
+              className="pl-4 w-full rounded-lg bg-sidebar-accent-foreground"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            <Search className="absolute right-2 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          </div>
+          <div className="flex gap-2">
+            <Button variant="outline" className="bg-sidebar-accent-foreground">
+              <Filter className="mr-2 h-4 w-4 text-card-box" />
+            </Button>
+            <Button
+              className="bg-card-box whitespace-nowrap"
+              onClick={() => navigate("/agents/create")}
+            >
+              Create Agent
+            </Button>
+          </div>
         </div>
-        <Button variant="outline">
-          <Filter className="mr-2 h-4 w-4" />
-          Filter
-        </Button>
       </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList>
-          <TabsTrigger value="all">All Agents ({allAgents.length})</TabsTrigger>
-          <TabsTrigger value="active">Active ({activeAgents})</TabsTrigger>
-          <TabsTrigger value="paused">Paused ({pausedAgents})</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value={activeTab} className="mt-4">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full mt-4">
+        <TabsList className="flex flex-wrap gap-2 px-2">
+  <TabsTrigger
+    className="text-blue-900 rounded-lg data-[state=active]:bg-blue-900 data-[state=active]:text-white px-2 py-1 text-sm sm:px-8 sm:py-5 sm:text-base mt-2"
+    value="all"
+  >
+    All Agents ({allAgents.length})
+  </TabsTrigger>
+  <TabsTrigger
+    className="text-blue-900 rounded-lg data-[state=active]:bg-blue-900 data-[state=active]:text-white px-2 py-1 text-sm sm:px-8 sm:py-5 sm:text-base mt-2"
+    value="active"
+  >
+    Active ({activeAgents})
+  </TabsTrigger>
+  <TabsTrigger
+    className="text-blue-900 rounded-lg data-[state=active]:bg-blue-900 data-[state=active]:text-white px-2 py-1 text-sm sm:px-8 sm:py-5 sm:text-base mt-2"
+    value="paused"
+  >
+    Paused ({pausedAgents})
+  </TabsTrigger>
+</TabsList>
+        <TabsContent value={activeTab}>
           <Card>
             <CardContent className="p-0">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Agent</TableHead>
-                    <TableHead>Type</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Model</TableHead>
-                    <TableHead>Requests</TableHead>
-                    <TableHead>Accuracy</TableHead>
-                    <TableHead>Last Active</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredAgents.map((agent) => (
-                    <TableRow
-                      key={agent.id}
-                      className="cursor-pointer hover:bg-muted/50"
-                    >
-                      <TableCell
-                        className="font-medium"
-                        onClick={() => handleAgentClick(agent.id)}
-                      >
-                        <div className="flex items-center gap-3">
-                          <Avatar className="h-10 w-10">
-                            <AvatarFallback>
-                              <Bot className="h-5 w-5" />
-                            </AvatarFallback>
-                          </Avatar>
-                          <div>
-                            <div className="font-medium">{agent.name}</div>
-                            <div className="text-sm text-muted-foreground">
-                              {agent.description}
-                            </div>
-                          </div>
-                        </div>
-                      </TableCell>
-                      <TableCell onClick={() => handleAgentClick(agent.id)}>
-                        <Badge variant="outline">{agent.type}</Badge>
-                      </TableCell>
-                      <TableCell onClick={() => handleAgentClick(agent.id)}>
-                        <Badge
-                          variant={
-                            agent.status === "active" ? "default" : "secondary"
-                          }
-                          className={
-                            agent.status === "active"
-                              ? "bg-green-100 text-green-800"
-                              : ""
-                          }
-                        >
-                          {agent.status}
-                        </Badge>
-                      </TableCell>
-                      <TableCell onClick={() => handleAgentClick(agent.id)}>
-                        {agent.model}
-                      </TableCell>
-                      <TableCell onClick={() => handleAgentClick(agent.id)}>
-                        {agent.requests.toLocaleString()}
-                      </TableCell>
-                      <TableCell onClick={() => handleAgentClick(agent.id)}>
-                        {agent.accuracy}%
-                      </TableCell>
-                      <TableCell
-                        className="text-muted-foreground"
-                        onClick={() => handleAgentClick(agent.id)}
-                      >
-                        {agent.lastActive}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0">
-                              <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem
-                              onClick={() => handleAgentClick(agent.id)}
-                            >
-                              <Eye className="mr-2 h-4 w-4" />
-                              View Details
-                            </DropdownMenuItem>
-                            <DropdownMenuItem>
-                              <Edit className="mr-2 h-4 w-4" />
-                              Edit
-                            </DropdownMenuItem>
-                            <DropdownMenuItem>
-                              {agent.status === "active" ? (
-                                <>
-                                  <Pause className="mr-2 h-4 w-4" />
-                                  Pause
-                                </>
-                              ) : (
-                                <>
-                                  <Play className="mr-2 h-4 w-4" />
-                                  Start
-                                </>
-                              )}
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem className="text-red-600">
-                              <Trash2 className="mr-2 h-4 w-4" />
-                              Delete
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </TableCell>
+              <div className="overflow-x-auto">
+                <Table className="min-w-full text-sm">
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Agent</TableHead>
+                      <TableHead>Type</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Model</TableHead>
+                      <TableHead>Requests</TableHead>
+                      <TableHead>Accuracy</TableHead>
+                      <TableHead>Last Active</TableHead>
+                      <TableHead>Actions</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredAgents.map((agent) => (
+                      <TableRow
+                        key={agent.id}
+                        className="hover:bg-gray-50 transition-colors cursor-pointer"
+                      >
+                        <TableCell className="font-medium text-gray-900 whitespace-nowrap">
+                          {agent.name}
+                        </TableCell>
+                        <TableCell className="text-gray-600 whitespace-nowrap">
+                          {agent.type}
+                        </TableCell>
+                        <TableCell>
+                          <span
+                            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                              agent.status === "active"
+                                ? "bg-orange-100 text-orange-800"
+                                : "bg-gray-100 text-gray-800"
+                            }`}
+                          >
+                            {agent.status === "active" ? "Active" : "Paused"}
+                          </span>
+                        </TableCell>
+                        <TableCell className="text-gray-600 whitespace-nowrap">
+                          {agent.model}
+                        </TableCell>
+                        <TableCell className="text-gray-600 whitespace-nowrap">
+                          {agent.requests.toLocaleString()}
+                        </TableCell>
+                        <TableCell className="text-gray-600 whitespace-nowrap">
+                          {agent.accuracy}%
+                        </TableCell>
+                        <TableCell className="text-gray-500 whitespace-nowrap">
+                          {agent.lastActive}
+                        </TableCell>
+                        <TableCell>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" className="h-8 w-8 p-0">
+                                <MoreHorizontal className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem
+                                onClick={() => handleAgentClick(agent.id)}
+                              >
+                                <Eye className="mr-2 h-4 w-4" />
+                                View Details
+                              </DropdownMenuItem>
+                              <DropdownMenuItem>
+                                <Edit className="mr-2 h-4 w-4" />
+                                Edit
+                              </DropdownMenuItem>
+                              <DropdownMenuItem>
+                                {agent.status === "active" ? (
+                                  <>
+                                    <Pause className="mr-2 h-4 w-4" />
+                                    Pause
+                                  </>
+                                ) : (
+                                  <>
+                                    <Play className="mr-2 h-4 w-4" />
+                                    Start
+                                  </>
+                                )}
+                              </DropdownMenuItem>
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem className="text-red-600">
+                                <Trash2 className="mr-2 h-4 w-4" />
+                                Delete
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>

@@ -51,7 +51,7 @@ const data = {
   navMain: [
     {
       title: "Dashboard",
-      url: "/dashboard",
+      url: "/dashboard/home",
       icon: BarChart3,
     },
     {
@@ -102,7 +102,7 @@ export function DashboardLayout() {
     if (path.startsWith("/analytics")) return "Analytics";
     if (path.startsWith("/users")) return "Users";
     if (path.startsWith("/settings")) return "Settings";
-    return "AI Agent Hub";
+    return "Welcome to AI Agent Dashboard";
   };
 
   return (
@@ -111,7 +111,7 @@ export function DashboardLayout() {
         <SidebarHeader>
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton size="lg" asChild>
+              <SidebarMenuButton size="lg"className="flex items-center justify-center pointer-events-none"   asChild>
                 <button
                   onClick={() => handleNavigation("/dashboard")}
                   className="flex items-center gap-2 w-full"
@@ -119,15 +119,15 @@ export function DashboardLayout() {
                   <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
                     <Brain className="size-4" />
                   </div>
-                  <div className="flex flex-col gap-0.5 leading-none">
+                  {/* <div className="flex flex-col gap-0.5 leading-none">
                     <span className="font-semibold">AI Agent Hub</span>
                     <span className="text-xs">Management Platform</span>
-                  </div>
+                  </div> */}
                 </button>
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>
-          <form>
+          {/* <form>
             <SidebarGroup className="py-0">
               <SidebarGroupContent className="relative">
                 <Label htmlFor="search" className="sr-only">
@@ -141,11 +141,10 @@ export function DashboardLayout() {
                 <Search className="pointer-events-none absolute left-2 top-1/2 size-4 -translate-y-1/2 select-none opacity-50" />
               </SidebarGroupContent>
             </SidebarGroup>
-          </form>
+          </form> */}
         </SidebarHeader>
         <SidebarContent>
           <SidebarGroup>
-            <SidebarGroupLabel>Navigation</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 {data.navMain.map((item) => (
@@ -164,7 +163,7 @@ export function DashboardLayout() {
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
-          <SidebarGroup>
+          {/* <SidebarGroup>
             <SidebarGroupLabel>Quick Actions</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
@@ -182,7 +181,7 @@ export function DashboardLayout() {
                 </SidebarMenuItem>
               </SidebarMenu>
             </SidebarGroupContent>
-          </SidebarGroup>
+          </SidebarGroup> */}
         </SidebarContent>
         <SidebarFooter>
           <SidebarMenu>
@@ -191,16 +190,17 @@ export function DashboardLayout() {
                 <DropdownMenuTrigger asChild>
                   <SidebarMenuButton
                     size="lg"
-                    className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+                    className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground pointer-events-none mb-6  bg-sidebar-accent-active"
                   >
-                    <Avatar className="h-8 w-8 rounded-lg">
+                    <Avatar className="h-10 w-10 rounded-full ">
                       <AvatarImage
+                      
                         src={data.user.avatar || "/placeholder.svg"}
                         alt={data.user.name}
                       />
-                      <AvatarFallback className="rounded-lg">AJ</AvatarFallback>
+                      <AvatarFallback className="rounded-lg bg-card-box">AJ</AvatarFallback>
                     </Avatar>
-                    <div className="grid flex-1 text-left text-sm leading-tight">
+                    <div className="grid flex-1 text-left text-sm leading-tight ">
                       <span className="truncate font-semibold">
                         {data.user.name}
                       </span>
@@ -259,7 +259,7 @@ export function DashboardLayout() {
         <SidebarRail />
       </Sidebar>
       <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+        <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4 mt-2">
           <SidebarTrigger className="-ml-1" />
           <Separator orientation="vertical" className="mr-2 h-4" />
           <div className="flex flex-1 items-center justify-between">
@@ -269,18 +269,23 @@ export function DashboardLayout() {
             <div className="flex items-center gap-2">
               <Button
                 variant="outline"
-                size="sm"
+                size="lg"
+                className="bg-blue-900 text-white rounded-lg"
                 onClick={() => handleNavigation("/agents/create")}
               >
                 <Plus className="size-4 mr-2" />
                 New Agent
               </Button>
-              <Button variant="ghost" size="sm">
-                <Bell className="size-4" />
+              <div className="bg-sidebar-accent-foreground rounded-full">
+             <Button variant="ghost" size="sm" >
+                <Bell fill="currentColor" className="size-5 text-card-box"  />
               </Button>
+              </div>
+             
             </div>
           </div>
         </header>
+        <Separator orientation="horizontal" className="mb-4 h-4" />
         <div className="flex flex-1 flex-col">
           <Outlet />
         </div>

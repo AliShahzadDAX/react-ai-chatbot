@@ -1,4 +1,4 @@
-import { Activity, Clock, MessageSquare, Users } from "lucide-react";
+import { Activity, Bot, Clock, MessageSquare, Users, Zap } from "lucide-react";
 
 import {
   Card,
@@ -8,7 +8,36 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import DashboardCard from "@/components/dashboard-card";
 
+const data = {
+  stats: [
+    {
+      title: "Total Requests",
+      value: "12,847",
+      change: "2",
+      icon: MessageSquare,
+    },
+    {
+      title: "Active Users",
+      value: "2,847",
+      change: "5",
+      icon: Users,
+    },
+    {
+      title: "Avg Response Time",
+      value: "1.2s",
+      change: "7",
+      icon: Clock,
+    },
+    {
+      title: "Success Rate",
+      value: "94.2%",
+      change: "8",
+      icon: Activity,
+    },
+  ],
+};
 export function AnalyticsPage() {
   return (
     <div className="flex flex-1 flex-col gap-4 p-4">
@@ -20,58 +49,15 @@ export function AnalyticsPage() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Total Requests
-            </CardTitle>
-            <MessageSquare className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">12,847</div>
-            <p className="text-xs text-muted-foreground">
-              +20.1% from last month
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Users</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">2,350</div>
-            <p className="text-xs text-muted-foreground">
-              +180.1% from last month
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Avg Response Time
-            </CardTitle>
-            <Clock className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">1.2s</div>
-            <p className="text-xs text-muted-foreground">
-              -0.3s from last month
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Success Rate</CardTitle>
-            <Activity className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">94.2%</div>
-            <p className="text-xs text-muted-foreground">
-              +2.1% from last month
-            </p>
-          </CardContent>
-        </Card>
+        {data.stats.map((stat, index) => (
+          <DashboardCard
+            key={index}
+            title={stat.title}
+            value={stat.value}
+            change={stat.change}
+            icon={stat.icon}
+          />
+        ))}
       </div>
 
       <Tabs defaultValue="overview" className="w-full">
