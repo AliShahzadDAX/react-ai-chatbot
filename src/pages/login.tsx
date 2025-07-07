@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { Link } from "react-router"
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { API_BASE_URL } from "@/lib/api";
 
 import { Button } from "@/components/ui/button";
@@ -102,11 +103,13 @@ export default function LoginPage() {
       } else {
         throw new Error("Login failed");
       }
-    } catch (error) {
+    } catch {
       setMessage("Login failed. Please check your credentials.");
       setMessageType("error");
     }
   };
+
+  console.log("Test");
 
   return (
     <div className="min-h-screen bg-white flex items-center justify-center px-4">
@@ -177,7 +180,10 @@ export default function LoginPage() {
           <div className="text-center text-sm text-muted-foreground">
             {"Don't have an account? "}
             <Button variant="link" className="px-0 font-normal">
-              Sign up
+              <Link to="/register">
+                Sign up
+              </Link>
+              
             </Button>
           </div>
         </CardFooter>
